@@ -78,4 +78,15 @@ class CliFacade
             $this->listAllCommands();
         }
     }
+
+    /**
+     * распарсить аргументы скрипта без регистрации команды
+     * @return array
+     */
+    public function parse(): array
+    {
+       $emptyCommand = new \MyCommand();
+       $emptyCommand->parseArgsParams(0);
+       return ['args' => $emptyCommand->getArgList(), 'params' => $emptyCommand->getParamList()];
+    }
 }

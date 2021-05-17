@@ -36,7 +36,7 @@ class CliCommand extends AbstractCliCommand
      */
     public function exec()
     {
-        $this->parseArgs();
+        $this->parse();
         call_user_func($this->callback);
     }
 

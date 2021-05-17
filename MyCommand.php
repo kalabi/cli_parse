@@ -29,7 +29,7 @@ class MyCommand extends AbstractCliCommand
      */
     public function exec()
     {
-        $this->parseArgs();
+        $this->parse();
 
         foreach ($this->getParamList() as $item) {
             if (mb_strpos($item, '=')) {

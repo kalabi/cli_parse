@@ -104,10 +104,10 @@ abstract class AbstractCliCommand
     }
 
     /**
-     * распарсить список аргументов и параметров
+     * запустить парсинг
      * @return bool
      */
-    public function parseArgs(): bool
+    public function parse(): bool
     {
         global $argv;
         global $argc;
@@ -122,8 +122,22 @@ abstract class AbstractCliCommand
             return false;
         }
 
+        $this->parseArgsParams();
+
+        $this->checkHelp();
+
+        return true;
+    }
+
+    /**
+     * распарсить аргументы и параметры
+     * @param int $commandArguments - является ли первый аругмент именем команды
+     */
+    public function parseArgsParams(int $commandArguments = 1)
+    {
+        global $argv;
         foreach ($argv as $k => $item) {
-            if ($k <= 1) {
+            if ($k <= $commandArguments) {
                 continue;
             }
 
@@ -142,10 +156,6 @@ abstract class AbstractCliCommand
                 }
             }
         }
-
-        $this->checkHelp();
-
-        return true;
     }
 
     /**
@@ -155,7 +165,7 @@ abstract class AbstractCliCommand
     {
         foreach ($this->argList as $item) {
             if ($item === 'help') {
-                $this->printLn($this->description);
+                $this->printLn($this->getDescription());
             }
         }
     }

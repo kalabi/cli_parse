@@ -4,49 +4,53 @@
 namespace Cli;
 
 
+/**
+ * Интерфейс команды
+ * Class AbstractCliCommand
+ * @package Cli
+ */
 abstract class AbstractCliCommand
 {
+    /**
+     * регулярка для аргументов
+     * @var string
+     */
     private string $argRegExp = '/\{(.*)\}/m';
+
+    /**
+     * регулярка для параметров
+     * @var string
+     */
     private string $paramRegExp = '/\[(.*)\]/m';
+
+
+    /**
+     * список аргументов
+     * @var array
+     */
     private array $argList = [];
+
+    /**
+     * список параметров
+     * @var array
+     */
     private array $paramList = [];
+
+    /**
+     * название команды
+     * @var string
+     */
     public string $name;
 
     /**
-     * @return string
+     * описание команды
+     * @var string
      */
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    /**
-     * @param string $name
-     */
-    public function setName(string $name): void
-    {
-        $this->name = $name;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDescription(): string
-    {
-        return $this->description;
-    }
-
-    /**
-     * @param string $description
-     */
-    public function setDescription(string $description): void
-    {
-        $this->description = $description;
-    }
     public string $description;
-    public function exec(){}
+
 
     /**
+     * получить список аргуметов
      * @return array
      */
     public function getArgList(): array
@@ -55,6 +59,7 @@ abstract class AbstractCliCommand
     }
 
     /**
+     * получить список параметров
      * @return array
      */
     public function getParamList(): array
@@ -62,33 +67,69 @@ abstract class AbstractCliCommand
         return $this->paramList;
     }
 
+    /**
+     * полуить название команды
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
 
+    /**
+     * установить название команды
+     * @param string $name
+     */
+    public function setName(string $name): void
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * получить описание команды
+     * @return string
+     */
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    /**
+     * установить описание команды
+     * @param string $description
+     */
+    public function setDescription(string $description): void
+    {
+        $this->description = $description;
+    }
+
+    /**
+     * распарсить список аргументов и параметров
+     * @return bool
+     */
     public function parseArgs(): bool
     {
         global $argv;
         global $argc;
 
-        if ($argc === 0) {
+        if ($argc === 1) {
             return false;
         }
 
         $commandName = $argv[1];
 
-        if($commandName !== $this->name)
-        {
+        if ($commandName !== $this->name) {
             return false;
         }
 
         foreach ($argv as $k => $item) {
-            if($k <= 1)
-            {
+            if ($k <= 1) {
                 continue;
             }
 
             $isParam = preg_match($this->paramRegExp, $item, $paramMatch);
 
-            if($isParam)
-            {
+            if ($isParam) {
                 $this->paramList[] = $paramMatch[1];
             } else {
 
@@ -102,16 +143,33 @@ abstract class AbstractCliCommand
             }
         }
 
+        $this->checkHelp();
+
         return true;
     }
 
-    public function registerCommand()
+    /**
+     * проверить передан ли аргумент help
+     */
+    protected function checkHelp()
     {
-
+        foreach ($this->argList as $item) {
+            if ($item === 'help') {
+                $this->printLn($this->description);
+            }
+        }
     }
 
+    /**
+     * вывести строку в консоль
+     * @param string $line
+     */
     public function printLn(string $line)
     {
-        print $line.PHP_EOL;
+        print $line . PHP_EOL;
+    }
+
+    public function exec()
+    {
     }
 }
